@@ -1,25 +1,24 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from secrets import sender_email, receiver_email, password
+from secrets import sender_email, password
 
 # Email details
+def send_email(receiver_email: str, subject: str, content: str) -> str:
+    """Send an email to the specified receiver with the given subject and content."""
+    # Create email
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Subject"] = subject
 
-subject = "Test Email from Python"
-body = "Hello! This email was sent using Python."
+    message.attach(MIMEText(content, "plain"))
 
-# Create email
-message = MIMEMultipart()
-message["From"] = sender_email
-message["To"] = receiver_email
-message["Subject"] = subject
+    # Send email
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login(sender_email, password)
+        server.send_message(message)
 
-message.attach(MIMEText(body, "plain"))
+    return "Email sent successfully!"
 
-# Send email
-with smtplib.SMTP("smtp.gmail.com", 587) as server:
-    server.starttls()
-    server.login(sender_email, password)
-    server.send_message(message)
-
-print("Email sent successfully!")
